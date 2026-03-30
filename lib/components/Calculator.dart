@@ -1,4 +1,3 @@
-
 import 'dart:math';
 //
 // import 'package:hive/hive.dart';
@@ -81,10 +80,10 @@ import 'dart:math';
 //   }
 // }
 
-
-class holderClass{
+class holderClass {
   List<String> splitter(String expression) {
     List<String> splitted = [];
+    List<String> newOne = ["0"];
     String digits = "";
     for (int i = 0; i < expression.length; i++) {
       if (i > 0) {
@@ -93,14 +92,10 @@ class holderClass{
 
         bool prevI = RegExp(r'[0-9.]').hasMatch(prev);
         bool currI = RegExp(r'[0-9.]').hasMatch(curr);
-        if (
-        (prev == ')' && currI) ||
+        if ((prev == ')' && currI) ||
             (prevI && curr == '(') ||
-            (prev == ')' && curr == '(')
-        ) {
-          if (digits
-              .trim()
-              .isNotEmpty) {
+            (prev == ')' && curr == '(')) {
+          if (digits.trim().isNotEmpty) {
             splitted.add(digits);
             digits = '';
           }
@@ -108,21 +103,40 @@ class holderClass{
         }
       }
 
-      if (expression[i] != '+' && expression[i] != '-' &&
-          expression[i] != '*' && expression[i] != '/' &&
-          expression[i] != '=' && expression[i] != '(' &&
+      if (expression[i] != '+' &&
+          expression[i] != '-' &&
+          expression[i] != '*' &&
+          expression[i] != '/' &&
+          expression[i] != '=' &&
+          expression[i] != '(' &&
           expression[i] != ')') {
         digits += expression[i];
-      }
-      else {
-        if ((expression[i] == "+" || expression[i] == "-") && (i == 0 ||
-            expression[i - 1] == "(" || expression[i - 1] == '+' ||
-            expression[i - 1] == '-' || expression[i - 1] == '*' ||
-            expression[i - 1] == '/' || expression[i - 1] == "=")) {
-          if (expression[i] == "-" && i + 1 < expression.length &&
+      } else {
+        if ((expression[i] == '+' || expression[i] == '-') &&
+            (i == 0 ||
+                expression[i - 1] == '(' ||
+                expression[i - 1] == '+' ||
+                expression[i - 1] == '-' ||
+                expression[i - 1] == '*' ||
+                expression[i - 1] == '/' ||
+                expression[i - 1] == '=')) {
+          if (expression[i] == '-' &&
+              i + 1 < expression.length &&
               expression[i + 1] == '(') {
-            splitted.add("-1");
-            splitted.add("*");
+            splitted.add('-1');
+            splitted.add('*');
+            continue;
+          }
+
+          if (expression[i] == "-") {
+            if (digits.startsWith('-')) {
+              digits = digits.substring(1);
+            } else {
+              digits = '-';
+            }
+            continue;
+          }
+          if (expression[i] == "+") {
             continue;
           }
           digits += expression[i];
@@ -130,13 +144,10 @@ class holderClass{
           continue;
         }
 
-
-// if(digits.isNotEmpty){
-// splitted.add(digits);
-// }
-        if (digits
-            .trim()
-            .isNotEmpty) {
+        // if(digits.isNotEmpty){
+        // splitted.add(digits);
+        // }
+        if (digits.trim().isNotEmpty) {
           splitted.add(digits);
         }
         digits = '';
@@ -190,16 +201,32 @@ class holderClass{
 
       if (minusCount % 2 != 0) {
         splitted.add("-" + numberPart);
-      }
-      else {
+      } else {
         splitted.add(numberPart);
       }
     }
-    print(splitted);
+    print("Hi ${splitted}");
+
+    // for(int i = 0;i<splitted.length;i++){
+    //   if(splitted[i]=="(" && (splitted[i]!="(" || splitted[i]!=")")){
+    //     if(i==splitted.length-1){
+    //       return newOne;
+    //     }
+    //   }
+    //   else{
+    //     return splitted;
+    //   }
+    // }
+
+    // bool onlyOpenParens = splitted.every((token) => token == "(");
+    // if (onlyOpenParens) {
+    //   return newOne;
+    // }
 
     return splitted;
   }
 }
+
 class Calculator {
   String Calculation(String expression) {
     String prefinal = "";
@@ -207,8 +234,6 @@ class Calculator {
     List<String> stack = [];
     String digits = "";
     holderClass h = holderClass();
-
-
 
     List<String> splitted = h.splitter(expression);
     // print(splitted);
@@ -218,16 +243,18 @@ class Calculator {
       if (op == "+" || op == "-") return 1;
       return 0;
     }
-    for (int i = 0; i < splitted.length; i++) {
-      if (splitted[i] != '+' && splitted[i] != '-' && splitted[i] != '*' &&
-          splitted[i] != '/' && splitted[i] != '(' && splitted[i] != ')') {
-        postFix.add(splitted[i]);
-      }
 
-      else if (splitted[i] == '(') {
+    for (int i = 0; i < splitted.length; i++) {
+      if (splitted[i] != '+' &&
+          splitted[i] != '-' &&
+          splitted[i] != '*' &&
+          splitted[i] != '/' &&
+          splitted[i] != '(' &&
+          splitted[i] != ')') {
+        postFix.add(splitted[i]);
+      } else if (splitted[i] == '(') {
         stack.add(splitted[i]);
       }
-
       // else if(splitted[i]=="*" && splitted[i-1]=="+"){
       //   return "";
       // }
@@ -268,19 +295,18 @@ class Calculator {
       //   //     stack.add(splitted[i]);
       //   // }
       // }
-
-
-      else if (splitted[i] == "*" || splitted[i] == "/" || splitted[i] == "+" ||
+      else if (splitted[i] == "*" ||
+          splitted[i] == "/" ||
+          splitted[i] == "+" ||
           splitted[i] == "-") {
-        while (stack.isNotEmpty && stack.last != "(" &&
+        while (stack.isNotEmpty &&
+            stack.last != "(" &&
             precedence(stack.last) >= precedence(splitted[i])) {
           postFix.add(stack.last);
           stack.removeLast();
         }
         stack.add(splitted[i]);
-      }
-
-      else if (splitted[i] == ')') {
+      } else if (splitted[i] == ')') {
         // print(splitted[i]);
         while (stack.isNotEmpty && stack.last != '(') {
           postFix.add(stack.removeLast());
@@ -293,14 +319,14 @@ class Calculator {
         //   continue
         // }
         // stack.removeLast();
-
       }
-
     }
+
     bool m = stack.isNotEmpty;
     while (stack.isNotEmpty) {
       postFix.add(stack.removeLast());
     }
+    if (postFix.isEmpty) return "0";
     bool isOperator(String s) {
       return s == "+" || s == "-" || s == "*" || s == "/";
     }
@@ -335,19 +361,15 @@ class Calculator {
         double result = performOperation(operand1, operand2, c);
         Stack.add(result.toString());
         // print(Stack);
-      }
-      else {
+      } else {
         // print(Stack);
         Stack.add(c);
-
       }
       // print(Stack);
     }
     String evaluatedResult = Stack.removeLast();
     // print(evaluatedResult);
 
-
-    // //
     // // for(int i=0;i<postFix.length;i++){
     // //   if(postFix[i]=="+" || postFix[i]=="-" || postFix[i]=="*" || postFix[i]=="/") {
     // //     // if(i>=2){
@@ -360,7 +382,7 @@ class Calculator {
     // //     // }
     // //
     // //     if (i >= 2 && !(isOperator(postFix[i-1]) && !(isOperator(postFix[i-2]))) ) {
-    // //       // print(postFix[i-1]);
+    //       print(postFix[i-1]);
     // //       double? a = calculation(postFix[i - 2], postFix[i - 1], postFix[i]);
     // //       postFix.removeAt(i);
     // //       postFix.removeAt(i - 1);
@@ -375,6 +397,7 @@ class Calculator {
     String last = double.parse(evaluatedResult).toStringAsFixed(4);
     // print(last);
     prefinal = last;
+    prefinal = prefinal.replaceAll(RegExp(r'\.?0+$'), '');
     // print(last);
     int count = 0;
     for (int i = 0; i < last.length; i++) {
@@ -388,34 +411,30 @@ class Calculator {
     if (count > 3) {
       String number = "";
       String decimals = "";
-      bool isNegative = false;
-
-      if (number.startsWith("-")) {
-        isNegative = true;
-        number = number.substring(1);
-      }
-      for (int i = 0; i < last.length; i++) {
-        if (last[i] == '.') {
-          number = last.substring(0, i);
-          decimals = last.substring(i);
+      bool isNegative = last.startsWith("-");
+      String cleanLast = isNegative ? last.substring(1) : last;
+      for (int i = 0; i < cleanLast.length; i++) {
+        if (cleanLast[i] == '.') {
+          number = cleanLast.substring(0, i);
+          decimals = cleanLast.substring(i);
           break;
         }
       }
       // print(number);
-      print(decimals);
-      print(decimals.length-1);
+      // print(decimals);
+      // print(decimals.length-1);
 
-      int k = decimals.length-1;
+      int k = decimals.length - 1;
 
       // for(int i=1;i<decimals.length;i++){
       //   if(decimals[i]== '0'){
       //     k--;
       //   }
       // }
-      while (k>0 && decimals[k]=='0') {
+      while (k > 0 && decimals[k] == '0') {
         k--;
       }
-      print(k);
+      // print(k);
 
       // print(number.length);
 
@@ -426,9 +445,8 @@ class Calculator {
         // print(remaining);
         // print(formatted);
 
-        int k = number.length - 4;
-        int count = 0;
         List<String> emptyNumbers = <String>[];
+        count = 0;
         for (int i = remaining.length - 1; i >= 0; i--) {
           count++;
           if (count == 2) {
@@ -444,7 +462,6 @@ class Calculator {
           emptyNumbers.insert(0, remaining[0]);
         }
 
-
         // print(emptyNumbers);
 
         String grouped = emptyNumbers.join();
@@ -455,8 +472,8 @@ class Calculator {
         if (isNegative) {
           prefinal = "-" + prefinal;
         }
-        decimals = decimals.replaceAll(RegExp(r'0+$'),'');
-          prefinal = prefinal + decimals;
+        decimals = decimals.replaceAll(RegExp(r'0+$'), '');
+        prefinal = prefinal + decimals;
         // prefinal = prefinal + decimals;
 
         // print(prefinal);
@@ -479,7 +496,6 @@ class Calculator {
     //   return prefinal;
     // }
 
-
     // double? calculation(String a, String b, String c) {
     //   if (c == "+") {
     //     return double.parse(a) + double.parse(b);
@@ -496,15 +512,15 @@ class Calculator {
     //   return null;
     // }
     // print(prefinal[0]);
-    if (prefinal[0] == "-" && prefinal[1]==",") {
+    if (prefinal[0] == "-" && prefinal[1] == ",") {
       prefinal = "-" + prefinal.substring(2);
     }
     return prefinal;
   }
 }
 
-  void main() {
-// Calculation("--+3");
-    Calculator ca = Calculator();
-    ca.Calculation("-6234231*6");
-  }
+void main() {
+  // Calculation("--+3");
+  Calculator ca = Calculator();
+  ca.Calculation("-6234231*6");
+}

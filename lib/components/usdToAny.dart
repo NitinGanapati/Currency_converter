@@ -53,6 +53,13 @@ class _usdToAnyState extends State<usdToAny> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    result = 0;
+    super.dispose();
+  }
+
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
@@ -62,6 +69,7 @@ class _usdToAnyState extends State<usdToAny> {
         showCursor = !showCursor;
       });
     });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() {
         dropdownValue = widget.currencies.keys.first;
@@ -72,6 +80,7 @@ class _usdToAnyState extends State<usdToAny> {
 
   @override
   Widget build(BuildContext context) {
+    // result = 0;
     var w = MediaQuery.of(context).size.width;
     var h = MediaQuery.of(context).size.height;
     var numArray = [
@@ -218,32 +227,150 @@ class _usdToAnyState extends State<usdToAny> {
               Container(
                 child: ElevatedButton(
                   onPressed: () {
-                    setState(() {
+                    // String m = Calculator.Calculation(expression);
+
+                    if (no2Controller.text.isNotEmpty) {
+                      Calculator ca = Calculator();
+
+                      // if(closeB>openB){
+                      //   while(closeB>openB && expression.endsWith(")")){
+                      //     expression = expression.substring(0,expression.length-1);
+                      //     closeB--;
+                      //   }
+                      // }
+                      // print(openB);
+                      // print(closeB);
+
                       isCalculated = true;
-                      String cleanValue = no2Controller.text
+
+                      while (openB > closeB) {
+                        expression += ")";
+                        closeB++;
+                      }
+
+                      holderClass hm = holderClass();
+                      List<String> ak = hm.splitter(expression);
+                      var objak = ak.join(" ");
+                      print(objak);
+                      // var box = Hive.box('Nitin');
+                      // box.add({
+                      //   'value' : objak
+                      // });
+                      bool isDuplicate = true;
+                      // for (int i = 0; i < box.length; i++) {
+                      //   isDuplicate = true;
+                      //   var data = box.getAt(i);
+                      //   if(data['value']==objak){
+                      //     isDuplicate=false;
+                      //   }
+                      //
+                      //
+                      // }
+                      // if(isDuplicate){
+                      //   box.add({
+                      //     'value' : objak
+                      //   });
+                      // }
+                      String a = ca.Calculation(expression);
+                      // print(a.toString());
+
+                      // no1Controller.text = a.toString();
+
+                      String cleanResult = a
+                          .toString()
                           .replaceAll(',', '')
                           .replaceAll('(', '');
+                      double parsedResult = double.parse(cleanResult);
+                      String formattedResult = parsedResult % 1 == 0
+                          ? parsedResult.toInt().toString()
+                          : parsedResult.toString();
 
-                      print(cleanValue + "Hi");
-                      double? parsedValue = double.tryParse(cleanValue);
-                      if (parsedValue == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Press = first to evaluate the expression',
-                            ),
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
-                        return;
-                      }
-                      isCalculated = true;
+                      no1Controller.text = formattedResult;
+                      // no2Controller.text =
+                      //     formattedResult;
+                      expression = formattedResult;
+
+                      // finalValue = a
+                      //     .toString()
+                      //     .replaceAll(',', '')
+                      //     .replaceAll('(', '');
+                      //
+                      //
+                      //
+                      // if(finalValue.endsWith('.')){
+                      //   finalValue = finalValue.substring(0,finalValue.length-1);
+                      // }
+                      //
+                      //
+                      //
+                      // // if(no2Controller.text[no2Controller.text.length-1]=='.'){
+                      // //   finalValue = no2Controller.text.substring(0,no2Controller.text.length-2);
+                      // //   // print(finalValue + "Hello");
+                      // // }
+                      //
+                      // no2Controller.text = finalValue;
+                      //
+                      // expression = finalValue;
+                      result = double.parse(expression);
+                      no2Controller.text = formattedResult;
+
                       divoperation =
                           widget.rates[dropdownToValue] /
                           widget.rates[dropdownValue];
-                      result = parsedValue * divoperation;
-                      print("Nitnaa {$result}");
-                    });
+
+                      result = result * divoperation;
+
+                      // print(result);
+                      // print(result);
+                      // box.put({
+                      //
+                      // })
+
+                      // result = 0;
+
+                      points = 0;
+                      openB = 0;
+                      closeB = 0;
+                      // Calculator();
+                      // setState(() {
+                      //   isCalculated = true;
+                      //   String cleanValue = no2Controller.text
+                      //       .toString()
+                      //       .replaceAll(',', '')
+                      //       .replaceAll('(', '');
+                      //
+                      //   print(cleanValue + "Hi");
+                      //   double? parsedValue = double.tryParse(cleanValue);
+                      //
+                      //   if (parsedValue == null) {
+                      //     ScaffoldMessenger.of(context).showSnackBar(
+                      //       const SnackBar(
+                      //         content: Text(
+                      //           'Press = first to evaluate the expression',
+                      //         ),
+                      //         duration: Duration(seconds: 2),
+                      //       ),
+                      //     );
+                      //     return;
+                      //   }
+                      //   double parsedResult = double.parse(
+                      //     cleanValue,
+                      //   );
+                      //   String formattedResult = parsedResult % 1 == 0
+                      //       ? parsedResult
+                      //       .toInt()
+                      //       .toString()
+                      //       : parsedResult.toString();
+                      //     isCalculated = true;
+                      //     divoperation =
+                      //         widget.rates[dropdownToValue] /
+                      //             widget.rates[dropdownValue];
+                      //     result = double.parse(formattedResult) * divoperation;
+                      //     print("Nitnaa {$result}");
+                      //
+                      //
+                      // });
+                    }
                   },
                   child: Text("Convert"),
                 ),
@@ -256,6 +383,7 @@ class _usdToAnyState extends State<usdToAny> {
               child: isCalculated
                   ? Text(
                       '${formatIndian(result)} ${dropdownToValue ?? ''}',
+                      maxLines: 1,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -398,7 +526,6 @@ class _usdToAnyState extends State<usdToAny> {
 
                                             no2Controller.text = expression;
                                           } else if (numArray[index] == '=') {
-                                            // String m = Calculator.Calculation(expression);
                                             Calculator ca = Calculator();
 
                                             // if(closeB>openB){
@@ -410,76 +537,215 @@ class _usdToAnyState extends State<usdToAny> {
                                             // print(openB);
                                             // print(closeB);
 
-                                            while (openB > closeB) {
-                                              expression += ")";
-                                              closeB++;
+                                            if (no2Controller.text.isNotEmpty) {
+                                              isCalculated = true;
+
+                                              while (openB > closeB) {
+                                                expression += ")";
+                                                closeB++;
+                                              }
+
+                                              holderClass hm = holderClass();
+                                              List<String> ak = hm.splitter(
+                                                expression,
+                                              );
+                                              var objak = ak.join(" ");
+                                              print(objak);
+                                              // var box = Hive.box('Nitin');
+                                              // box.add({
+                                              //   'value' : objak
+                                              // });
+                                              bool isDuplicate = true;
+                                              // for (int i = 0; i < box.length; i++) {
+                                              //   isDuplicate = true;
+                                              //   var data = box.getAt(i);
+                                              //   if(data['value']==objak){
+                                              //     isDuplicate=false;
+                                              //   }
+                                              //
+                                              //
+                                              // }
+                                              // if(isDuplicate){
+                                              //   box.add({
+                                              //     'value' : objak
+                                              //   });
+                                              // }
+
+                                              String a = ca.Calculation(
+                                                expression,
+                                              );
+                                              // print(a.toString());
+
+                                              // no1Controller.text = a.toString();
+                                              // With this:
+                                              String cleanResult = a
+                                                  .toString()
+                                                  .replaceAll(',', '')
+                                                  .replaceAll('(', '');
+                                              double parsedResult =
+                                                  double.parse(cleanResult);
+                                              String formattedResult =
+                                                  parsedResult % 1 == 0
+                                                  ? parsedResult
+                                                        .toInt()
+                                                        .toString()
+                                                  : parsedResult.toString();
+
+                                              no1Controller.text =
+                                                  formattedResult;
+                                              // no2Controller.text =
+                                              //     formattedResult;
+                                              expression = formattedResult;
+
+                                              // finalValue = a
+                                              //     .toString()
+                                              //     .replaceAll(',', '')
+                                              //     .replaceAll('(', '');
+                                              //
+                                              //
+                                              //
+                                              // if(finalValue.endsWith('.')){
+                                              //   finalValue = finalValue.substring(0,finalValue.length-1);
+                                              // }
+                                              //
+                                              //
+                                              //
+                                              // // if(no2Controller.text[no2Controller.text.length-1]=='.'){
+                                              // //   finalValue = no2Controller.text.substring(0,no2Controller.text.length-2);
+                                              // //   // print(finalValue + "Hello");
+                                              // // }
+                                              //
+                                              // no2Controller.text = finalValue;
+                                              //
+                                              // expression = finalValue;
+                                              result = double.parse(expression);
+                                              no2Controller.text =
+                                                  formattedResult;
+
+                                              divoperation =
+                                                  widget
+                                                      .rates[dropdownToValue] /
+                                                  widget.rates[dropdownValue];
+
+                                              result = result * divoperation;
+                                              //
+                                              // print(result);
+                                              // print(result);
+                                              // box.put({
+                                              //
+                                              // })
+
+                                              // result = 0;
+
+                                              points = 0;
+                                              openB = 0;
+                                              closeB = 0;
                                             }
 
-                                            holderClass hm = holderClass();
-                                            List<String> ak = hm.splitter(
-                                              expression,
-                                            );
-                                            var objak = ak.join(" ");
-                                            print(objak);
-                                            // var box = Hive.box('Nitin');
-                                            // box.add({
-                                            //   'value' : objak
-                                            // });
-                                            bool isDuplicate = true;
-                                            // for (int i = 0; i < box.length; i++) {
-                                            //   isDuplicate = true;
-                                            //   var data = box.getAt(i);
-                                            //   if(data['value']==objak){
-                                            //     isDuplicate=false;
-                                            //   }
+                                            // isCalculated = true;
                                             //
+                                            // // String m = Calculator.Calculation(expression);
+                                            // Calculator ca = Calculator();
                                             //
-                                            // }
-                                            // if(isDuplicate){
-                                            //   box.add({
-                                            //     'value' : objak
-                                            //   });
-                                            // }
-
-                                            String a = ca.Calculation(
-                                              expression,
-                                            );
-                                            // print(a.toString());
-
-                                            no1Controller.text = a.toString();
-
-                                            finalValue = a
-                                                .toString()
-                                                .replaceAll(',', '')
-                                                .replaceAll('(', '');
-
-
-
-                                            if(finalValue.endsWith('.')){
-                                              finalValue = finalValue.substring(0,finalValue.length-1);
-                                            }
-
-
-
-                                            // if(no2Controller.text[no2Controller.text.length-1]=='.'){
-                                            //   finalValue = no2Controller.text.substring(0,no2Controller.text.length-2);
-                                            //   // print(finalValue + "Hello");
-                                            // }
-
-                                            no2Controller.text = finalValue;
-
-                                            expression = finalValue;
-
-
-
-                                            print(expression + "Namaste neet");
-                                            // box.put({
+                                            // // if(closeB>openB){
+                                            // //   while(closeB>openB && expression.endsWith(")")){
+                                            // //     expression = expression.substring(0,expression.length-1);
+                                            // //     closeB--;
+                                            // //   }
+                                            // // }
+                                            // // print(openB);
+                                            // // print(closeB);
                                             //
-                                            // })
-
-                                            points = 0;
-                                            openB = 0;
-                                            closeB = 0;
+                                            // while (openB > closeB) {
+                                            //   expression += ")";
+                                            //   closeB++;
+                                            // }
+                                            //
+                                            // holderClass hm = holderClass();
+                                            // List<String> ak = hm.splitter(
+                                            //   expression,
+                                            // );
+                                            // var objak = ak.join(" ");
+                                            // print(objak);
+                                            // // var box = Hive.box('Nitin');
+                                            // // box.add({
+                                            // //   'value' : objak
+                                            // // });
+                                            // bool isDuplicate = true;
+                                            // // for (int i = 0; i < box.length; i++) {
+                                            // //   isDuplicate = true;
+                                            // //   var data = box.getAt(i);
+                                            // //   if(data['value']==objak){
+                                            // //     isDuplicate=false;
+                                            // //   }
+                                            // //
+                                            // //
+                                            // // }
+                                            // // if(isDuplicate){
+                                            // //   box.add({
+                                            // //     'value' : objak
+                                            // //   });
+                                            // // }
+                                            //
+                                            // String a = ca.Calculation(
+                                            //   expression,
+                                            // );
+                                            // // print(a.toString());
+                                            //
+                                            // // no1Controller.text = a.toString();
+                                            // // With this:
+                                            // String cleanResult = a
+                                            //     .toString()
+                                            //     .replaceAll(',', '')
+                                            //     .replaceAll('(', '');
+                                            // double parsedResult = double.parse(
+                                            //   cleanResult,
+                                            // );
+                                            // String formattedResult =
+                                            //     parsedResult % 1 == 0
+                                            //     ? parsedResult
+                                            //           .toInt()
+                                            //           .toString()
+                                            //     : parsedResult.toString();
+                                            //
+                                            // // no1Controller.text =
+                                            // //     formattedResult;
+                                            // // no2Controller.text =
+                                            // //     formattedResult;
+                                            // // expression = formattedResult;
+                                            //
+                                            // // result = double.parse(formattedResult);
+                                            //
+                                            // // finalValue = a
+                                            // //     .toString()
+                                            // //     .replaceAll(',', '')
+                                            // //     .replaceAll('(', '');
+                                            // //
+                                            // //
+                                            // //
+                                            // // if(finalValue.endsWith('.')){
+                                            // //   finalValue = finalValue.substring(0,finalValue.length-1);
+                                            // // }
+                                            // //
+                                            // //
+                                            // //
+                                            // // // if(no2Controller.text[no2Controller.text.length-1]=='.'){
+                                            // // //   finalValue = no2Controller.text.substring(0,no2Controller.text.length-2);
+                                            // // //   // print(finalValue + "Hello");
+                                            // // // }
+                                            // //
+                                            // // no2Controller.text = finalValue;
+                                            // //
+                                            // // expression = finalValue;
+                                            //
+                                            // // print(result);
+                                            // // box.put({
+                                            // //
+                                            // // })
+                                            //
+                                            // points = 0;
+                                            // openB = 0;
+                                            // closeB = 0;
                                           }
                                           // else if (numArray[index] == '+') {
                                           //   expression += '+';
@@ -517,7 +783,6 @@ class _usdToAnyState extends State<usdToAny> {
                                                 prevChar == "(") {
                                               return;
                                             }
-
                                             // print(prevChar);
                                             if (isOperators(prevChar) &&
                                                 isOperators(currentChar) &&
@@ -616,7 +881,7 @@ class _usdToAnyState extends State<usdToAny> {
                                         child: Text(
                                           numArray[index].toString(),
                                           style: const TextStyle(
-                                            color: Colors.white, // IMPORTANT
+                                            color: Colors.white,
                                             fontSize: 24,
                                             fontWeight: FontWeight.bold,
                                           ),

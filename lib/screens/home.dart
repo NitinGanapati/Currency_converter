@@ -65,6 +65,9 @@ class _HomeState extends State<Home> {
                 if (!snapshot.hasData) {
                   return const Text("No Data present");
                 }
+                if (snapshot.hasError) {
+                  return const Text("Something went wrong");
+                }
                 return Center(
                   // child: Text(snapshot.data!.rates.toString(),style: TextStyle(fontSize: 20,color: Colors.white),)
                   child: FutureBuilder<Map>(
