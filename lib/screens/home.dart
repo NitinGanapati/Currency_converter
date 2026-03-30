@@ -1,3 +1,4 @@
+import 'package:currency_converter/components/usdToAny.dart';
 import 'package:currency_converter/functions/fetchrates.dart';
 import 'package:flutter/material.dart';
 
@@ -17,17 +18,19 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
-
+  late Future<Map> allCurrencies;
   late Future<RatesModel> result;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     result = fetchRates();
+    allCurrencies = fetchcurrencies();
     super.initState();
   }
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
+
     var h= MediaQuery.of(context).size.height;
     var w= MediaQuery.of(context).size.width;
 
@@ -35,6 +38,8 @@ class _HomeState extends State<Home> {
     late Future<Map> allCurrency;
 
     return Scaffold(
+
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.grey.shade900,
         title: const Text("Currency Converter",style: TextStyle(color: Colors.white),),
@@ -42,8 +47,9 @@ class _HomeState extends State<Home> {
       ),
 
       body: Container(
-        height: h,
+        // height: h,
         width: w,
+        constraints: BoxConstraints(minHeight: h),
         padding: EdgeInsets.only(top: 65,left: 15,right: 15),
         decoration: BoxDecoration(
           image: DecorationImage(image: AssetImage('assets/backgroundpic.jpg'),
@@ -66,7 +72,21 @@ class _HomeState extends State<Home> {
                   return const Text("No Data present");
                 }
                 return Center(
-                  child: Text(snapshot.data!.rates.toString(),style: TextStyle(fontSize: 20,color: Colors.white),)
+                  // child: Text(snapshot.data!.rates.toString(),style: TextStyle(fontSize: 20,color: Colors.white),)
+                  child: FutureBuilder<Map>(future: allCurrencies,
+                      builder: (context, currSnapshot){
+                        if(currSnapshot.connectionState == ConnectionState.waiting){
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        return Column(
+                          children: [
+                            usdToAny(rates: snapshot.data!.rates,currencies: currSnapshot.data!)
+                          ],
+                        );
+                      }
+                  ),
                 );
               },
             ),
