@@ -295,6 +295,7 @@ class Calculator {
         // stack.removeLast();
 
       }
+
     }
     bool m = stack.isNotEmpty;
     while (stack.isNotEmpty) {
