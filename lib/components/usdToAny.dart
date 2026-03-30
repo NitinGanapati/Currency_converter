@@ -19,6 +19,8 @@ class _usdToAnyState extends State<usdToAny> {
   double result = 0.0;
   double divoperation = 0.0;
 
+  final ScrollController _resultScrollController = ScrollController();
+
   bool isCalculated = false;
 
   var openB = 0;
@@ -59,6 +61,8 @@ class _usdToAnyState extends State<usdToAny> {
     super.dispose();
   }
 
+
+
   @override
   void initState() {
     // TODO: implement initState
@@ -75,6 +79,12 @@ class _usdToAnyState extends State<usdToAny> {
         dropdownValue = widget.currencies.keys.first;
         dropdownToValue = widget.currencies.keys.last;
       });
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _resultScrollController.jumpTo(
+        _resultScrollController.position.maxScrollExtent,
+      );
     });
   }
 
@@ -311,7 +321,7 @@ class _usdToAnyState extends State<usdToAny> {
                       // no2Controller.text = finalValue;
                       //
                       // expression = finalValue;
-                      result = double.parse(expression);
+                      result = double.tryParse(expression) ?? 0.0;
                       no2Controller.text = formattedResult;
 
                       divoperation =
@@ -379,25 +389,30 @@ class _usdToAnyState extends State<usdToAny> {
           ),
           SizedBox(height: 30),
           Container(
+            constraints: BoxConstraints(maxHeight: 40),
             child: Center(
-              child: isCalculated
-                  ? Text(
-                      '${formatIndian(result)} ${dropdownToValue ?? ''}',
-                      maxLines: 1,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                controller: _resultScrollController,
+                child: isCalculated
+                    ? Text(
+                        '${formatIndian(result)} ${dropdownToValue ?? ''}',
+                        maxLines: null,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      )
+                    : Text(
+                        "0.0",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    )
-                  : Text(
-                      "0.0",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+              ),
             ),
           ),
           SizedBox(height: 50),
@@ -780,13 +795,18 @@ class _usdToAnyState extends State<usdToAny> {
                                                 .toString();
 
                                             if (isOperators(currentChar) &&
-                                                prevChar == "(") {
+                                                prevChar == "(" &&
+                                                currentChar != '-') {
                                               return;
                                             }
                                             // print(prevChar);
                                             if (isOperators(prevChar) &&
                                                 isOperators(currentChar) &&
                                                 currentChar != '-') {
+                                              return;
+                                            }
+
+                                            if (prevChar == '-' && currentChar == '-' && expression[expression.length - 2] != '(') {
                                               return;
                                             }
                                             // if(isOperators(prevChar) && (prevChar!="*" && prevChar=="-" && prevChar=="+")){
@@ -1154,10 +1174,17 @@ class _usdToAnyState extends State<usdToAny> {
   }
 
   String formatIndian(double value) {
+    // prevent scientific notation
     String numStr = value.toStringAsFixed(2);
+
+
+    if (numStr.contains('e') || numStr.contains('E')) {
+      numStr = value.toStringAsFixed(0) + '.00';
+    }
+
     List<String> parts = numStr.split('.');
     String number = parts[0];
-    String decimals = parts[1];
+    String decimals = parts.length > 1 ? parts[1] : '00';
 
     bool isNegative = number.startsWith('-');
     if (isNegative) number = number.substring(1);

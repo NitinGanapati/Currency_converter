@@ -83,7 +83,8 @@ import 'dart:math';
 class holderClass {
   List<String> splitter(String expression) {
     List<String> splitted = [];
-    List<String> newOne = ["0"];
+    List<String> except = ["0"];
+
     String digits = "";
     for (int i = 0; i < expression.length; i++) {
       if (i > 0) {
@@ -223,7 +224,15 @@ class holderClass {
     //   return newOne;
     // }
 
+    if(isOperator(splitted[splitted.length-1]) && splitted.isNotEmpty ){
+      return except;
+    }
+
     return splitted;
+  }
+
+  bool isOperator(String s) {
+    return s == "+" || s == "-" || s == "*" || s == "/";
   }
 }
 
@@ -515,6 +524,8 @@ class Calculator {
     if (prefinal[0] == "-" && prefinal[1] == ",") {
       prefinal = "-" + prefinal.substring(2);
     }
+
+
     return prefinal;
   }
 }
