@@ -1,12 +1,14 @@
 import 'package:currency_converter/models/allCurrencies.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:currency_converter/utils/key.dart';
+
 import '../models/ratesModelFromJson.dart';
 
 Future<RatesModel> fetchRates() async {
   final response = await http.get(
     Uri.parse(
-      'https://openexchangerates.org/api/latest.json?app_id=cbf1bf00e33547348cc0fc153ab5dea2',
+      'https://openexchangerates.org/api/latest.json?app_id=$key',
     ),
   );
   print(response.body);
@@ -17,7 +19,7 @@ Future<RatesModel> fetchRates() async {
 Future<Map> fetchcurrencies() async {
   final response = await http.get(
     Uri.parse(
-      'https://openexchangerates.org/api/currencies.json?app_id=cbf1bf00e33547348cc0fc153ab5dea2',
+      'https://openexchangerates.org/api/currencies.json?app_id=$key',
     ),
   );
   final allCurrencies = allCurrenciesFromJson(response.body);
