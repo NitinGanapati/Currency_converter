@@ -203,8 +203,6 @@ class holderClass {
       if (minusCount % 2 != 0) {
         splitted.add("-" + numberPart);
       } else {
-
-
         splitted.add(numberPart);
       }
     }
@@ -234,7 +232,6 @@ class holderClass {
         return ["0"];
       }
     }
-
 
     return splitted;
   }
