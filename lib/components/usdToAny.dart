@@ -61,8 +61,6 @@ class _usdToAnyState extends State<usdToAny> {
     super.dispose();
   }
 
-
-
   @override
   void initState() {
     // TODO: implement initState
@@ -241,7 +239,6 @@ class _usdToAnyState extends State<usdToAny> {
 
                     if (no2Controller.text.isNotEmpty) {
                       Calculator ca = Calculator();
-
                       // if(closeB>openB){
                       //   while(closeB>openB && expression.endsWith(")")){
                       //     expression = expression.substring(0,expression.length-1);
@@ -806,7 +803,11 @@ class _usdToAnyState extends State<usdToAny> {
                                               return;
                                             }
 
-                                            if (prevChar == '-' && currentChar == '-' && expression[expression.length - 2] != '(') {
+                                            if (prevChar == '-' &&
+                                                currentChar == '-' &&
+                                                expression[expression.length -
+                                                        2] !=
+                                                    '(') {
                                               return;
                                             }
                                             // if(isOperators(prevChar) && (prevChar!="*" && prevChar=="-" && prevChar=="+")){
@@ -1176,7 +1177,6 @@ class _usdToAnyState extends State<usdToAny> {
   String formatIndian(double value) {
     // prevent scientific notation
     String numStr = value.toStringAsFixed(2);
-
 
     if (numStr.contains('e') || numStr.contains('E')) {
       numStr = value.toStringAsFixed(0) + '.00';

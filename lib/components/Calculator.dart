@@ -203,6 +203,8 @@ class holderClass {
       if (minusCount % 2 != 0) {
         splitted.add("-" + numberPart);
       } else {
+
+
         splitted.add(numberPart);
       }
     }
@@ -224,9 +226,15 @@ class holderClass {
     //   return newOne;
     // }
 
-    if(isOperator(splitted[splitted.length-1]) && splitted.isNotEmpty ){
+    if (isOperator(splitted[splitted.length - 1]) && splitted.isNotEmpty) {
       return except;
     }
+    for (int i = 0; i < splitted.length - 1; i++) {
+      if (splitted[i] == '(' && splitted[i + 1] == ')') {
+        return ["0"];
+      }
+    }
+
 
     return splitted;
   }
@@ -524,7 +532,6 @@ class Calculator {
     if (prefinal[0] == "-" && prefinal[1] == ",") {
       prefinal = "-" + prefinal.substring(2);
     }
-
 
     return prefinal;
   }
